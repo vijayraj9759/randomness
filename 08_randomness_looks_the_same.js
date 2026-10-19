@@ -7,7 +7,7 @@ function generateRandomValue(min, max) {
 function generateRandomPositions(startPos, endPos) {
     const randomPositions = [];
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 1000; i++) {
         const x1 = generateRandomValue(startPos.x, endPos.x);
         const x2 = generateRandomValue(startPos.x, endPos.x);
         const x3 = generateRandomValue(startPos.x, endPos.x);
@@ -38,18 +38,19 @@ function setup() {
         a: 100,
     };
 
+    const startPos = { x: 0, y: 0 };
+    const endPos = { x: 1500, y: 600 };
+    const randomPositions = generateRandomPositions(startPos, endPos);
+
     return {
         screen: { width, height },
+        randomPositions,
         color,
     };
 }
 
 function draw(world) {
-    const startPos = { x: 0, y: 0 };
-    const endPos = { x: 1500, y: 600 };
-    const randomPositions = generateRandomPositions(startPos, endPos);
-
-    for (const position of randomPositions) {
+    for (const position of world.randomPositions) {
         r.DrawCircleV(position, 20, world.color);
     }
 }
