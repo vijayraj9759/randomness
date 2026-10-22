@@ -10,16 +10,16 @@ function addVector(v1, v2) {
 
 function generateRandomPositions(parallelogramConfig) {
     const randomPositions = [];
-    const { vector1, vector2 } = parallelogramConfig;
+    const { st, vector1, vector2 } = parallelogramConfig;
 
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 1000; i++) {
         const randomX = Math.random();
         const randomY = Math.random();
 
         const tH = scaleVector(vector1, randomX);
         const tV = scaleVector(vector2, randomY);
 
-        const randomPosition = addVector(tH, tV);
+        const randomPosition = addVector(st, addVector(tH, tV));
 
         randomPositions.push(randomPosition);
     }
@@ -33,7 +33,7 @@ function calcParallelogramCoordinates(parallelogramConfig) {
     const a = cf.st;
     const b = addVector(a, cf.vector1);
     const d = addVector(a, cf.vector2);
-    const c = addVector(b, d);
+    const c = addVector(a, addVector(cf.vector1, cf.vector2));
 
     return { a, b, c, d };
 }
@@ -53,8 +53,8 @@ function setup() {
         vector2: { x: 100, y: 100 },
     };
 
-    const randomPositions = generateRandomPositions(parallelogramConfig);
     const parallelogram = calcParallelogramCoordinates(parallelogramConfig);
+    const randomPositions = generateRandomPositions(parallelogramConfig);
 
     return {
         screen: { width, height },

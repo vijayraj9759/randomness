@@ -1,78 +1,122 @@
 const r = require("raylib");
 
+function randomValueBetween(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
 function radian(degree) {
     return (Math.PI / 180) * degree;
 }
 
-function generateRandomValue(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
-function mapX(value, st, end) {
-    return ((end - st) / 180) * value;
-}
-
-function mapY(value, st, end) {
-    return ((end - st) / 10) * 50 * value;
-}
-
-function generateRandomPositions(xAxis, yAxis, width, height) {
-    const randomPositions = [];
+function generateRandomValues(min, max) {
+    const randomValues = [];
 
     for (let i = 0; i < 1000; i++) {
-        const angle = generateRandomValue(0, 180);
-        const sinValue = Math.sin(radian(angle));
+        // const r1 = Math.sin(radian(randomValueBetween(0, 360))) * 500;
+        // const r2 = Math.cos(radian(randomValueBetween(0, 360))) * 500;
 
-        const randomValue = generateRandomValue(0, sinValue);
+        const r1 = randomValueBetween(min, max);
+        const r2 = randomValueBetween(min, max);
+        const r3 = randomValueBetween(min, max);
+        const r4 = randomValueBetween(min, max);
 
-        randomPositions.push({
-            x: width - mapX(angle, xAxis.min, xAxis.max),
-            y: height - mapY(randomValue, yAxis.min, yAxis.max),
-        });
+        randomValues.push((r1 + r2 + r3 + r4) / 4);
+        // randomValues.push((r1 + r2) / 3);
     }
 
-    return randomPositions;
+    return randomValues;
+}
+
+function isBetween(x, y, z) {
+    return x <= y && y <= z;
+}
+
+function calculateFrequencey(elements, range) {
+    const min = range.st;
+    const max = range.end;
+
+    let frequency = 0;
+    for (const element of elements) {
+        if (isBetween(min, element, max)) frequency++;
+    }
+
+    return frequency;
+}
+
+function calculateGraphCoordinates(randomValues, rangeWidth, window) {
+    const wHeight = window.height;
+
+    const coordinates = [];
+    for (let i = 0; i < 10; i++) {
+        const range = {
+            st: i * rangeWidth,
+            end: (i + 1) * rangeWidth,
+        };
+
+        const noOfElements = calculateFrequencey(randomValues, range);
+
+        console.log(noOfElements);
+
+        const x = range.st + (range.end - range.st) / 2;
+        const y = wHeight - noOfElements;
+
+        coordinates.push({ x, y });
+    }
+
+    console.log(coordinates);
+
+    return coordinates;
 }
 
 function setup() {
-    const width = 1500;
-    const height = 600;
+    const width = 500;
+    const height = 500;
     const windowTitle = "Random number";
-    const fps = 10;
+    const fps = 60;
 
     r.InitWindow(width, height, windowTitle);
     r.SetTargetFPS(fps);
 
-    const color = {
-        r: 255,
-        g: 255,
-        b: 255,
-        a: 100,
-    };
+    const min = 0;
+    const max = width;
+    const randomValues = generateRandomValues(min, max);
+    const rangeWidth = width / 10;
 
-    const xAxis = { min: 0, max: width };
-    const yAxis = { min: 0, max: 100 };
-    const randomPositions = generateRandomPositions(
-        xAxis,
-        yAxis,
-        width,
-        height,
+    const window = { width, height };
+
+    const lineGraphCoordinates = calculateGraphCoordinates(
+        randomValues,
+        rangeWidth,
+        window,
     );
 
-    console.log(randomPositions);
-
     return {
-        screen: { width, height },
-        randomPositions,
-        color,
+        window,
+        randomValues,
+        lineGraphCoordinates,
     };
 }
 
-function draw(world) {
-    // r.DrawCircle();
-    for (const position of world.randomPositions) {
-        r.DrawCircleV(position, 20, world.color);
+function drawRandomValues(randomValues, window) {
+    for (const value of randomValues) {
+        r.DrawLine(value, 0, value, window.height, r.WHITE);
     }
+}
+
+function drawGraph(coordinates) {
+    for (let i = 0; i < coordinates.length - 1; i++) {
+        r.DrawCircleV(coordinates[i], 10, r.RED);
+        r.DrawLineEx(coordinates[i], coordinates[i + 1], 2, r.RED);
+    }
+}
+
+function draw(world) {
+    const window = world.window;
+    const graphCoordinates = world.lineGraphCoordinates;
+    const randomValues = world.randomValues;
+
+    drawRandomValues(randomValues, window);
+    drawGraph(graphCoordinates);
 }
 
 function teardown() {
