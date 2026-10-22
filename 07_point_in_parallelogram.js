@@ -27,41 +27,13 @@ function generateRandomPositions(parallelogramConfig) {
     return randomPositions;
 }
 
-function radian(degree) {
-    return (Math.PI / 180) * degree;
-}
+function calcParallelogramCoordinates(parallelogramConfig) {
+    const cf = parallelogramConfig;
 
-function polarCoordinateX(r, angle) {
-    return r * Math.cos(angle);
-}
-
-function polarCoordinateY(r, angle) {
-    return r * Math.sin(angle);
-}
-
-function calcParallelogramCoordinates(parallelogram) {
-    const x = parallelogram.center.x;
-    const y = parallelogram.center.y;
-
-    const a1 = parallelogram.vector1.angle;
-    const a2 = parallelogram.vector2.angle;
-
-    const r1 = parallelogram.vector1.radius;
-    const r2 = parallelogram.vector2.radius;
-
-    const a = parallelogram.center;
-    const b = {
-        x: x + polarCoordinateX(r1, a1),
-        y: y + polarCoordinateY(r1, a1),
-    };
-    const c = {
-        x: b.x + polarCoordinateX(r2, a2),
-        y: b.y + polarCoordinateY(r2, a2),
-    };
-    const d = {
-        x: x + polarCoordinateX(r2, a2),
-        y: y + polarCoordinateY(r2, a2),
-    };
+    const a = cf.st;
+    const b = addVector(a, cf.vector1);
+    const d = addVector(a, cf.vector2);
+    const c = addVector(b, d);
 
     return { a, b, c, d };
 }
@@ -76,43 +48,42 @@ function setup() {
     r.SetTargetFPS(fps);
 
     const parallelogramConfig = {
+        st: { x: 0, y: 0 },
         vector1: { x: 500, y: 0 },
         vector2: { x: 100, y: 100 },
     };
 
     const randomPositions = generateRandomPositions(parallelogramConfig);
+    const parallelogram = calcParallelogramCoordinates(parallelogramConfig);
 
     return {
         screen: { width, height },
         randomPositions,
-        parallelogramConfig,
+        parallelogram,
     };
 }
 
 function drawParallelogram(parallelogram) {
-    r.DrawLineV(parallelogram.a, parallelogram.b, r.WHITE);
-    r.DrawLineV(parallelogram.b, parallelogram.c, r.WHITE);
-    r.DrawLineV(parallelogram.c, parallelogram.d, r.WHITE);
-    r.DrawLineV(parallelogram.d, parallelogram.a, r.WHITE);
+    r.DrawLineV(parallelogram.a, parallelogram.b, r.BLACK);
+    r.DrawLineV(parallelogram.b, parallelogram.c, r.BLACK);
+    r.DrawLineV(parallelogram.c, parallelogram.d, r.BLACK);
+    r.DrawLineV(parallelogram.d, parallelogram.a, r.BLACK);
 }
 
 function draw(world) {
-    // const parallelogram = world.parallelogram;
+    const parallelogram = world.parallelogram;
 
-    // drawParallelogram(parallelogram);
-    const cf = world.parallelogramConfig;
-    const center = { x: 0, y: 0 };
+    const color = {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 100,
+    };
 
-    const a = center;
-    const b = c.vector1;
-    const c = c.vector2;
-    const d = addVector(b, c);
-
-    const parallelogram = { a, b, c, d };
     drawParallelogram(parallelogram);
 
     for (const value of world.randomPositions) {
-        r.DrawCircleV(value, 10, r.WHITE);
+        r.DrawCircleV(value, 10, color);
     }
 }
 
