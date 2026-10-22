@@ -30,7 +30,6 @@ function setup() {
 }
 
 function draw(world) {
-    console.log(world);
     for (const value of world.randomValues) {
         r.DrawLine(value, 0, value, world.screen.height, r.WHITE);
     }

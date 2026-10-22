@@ -20,7 +20,7 @@ function generateRandomPositions(xAxis, yAxis, width, height) {
     const randomPositions = [];
 
     for (let i = 0; i < 1000; i++) {
-        const angle = generateRandomValue(-20, 190);
+        const angle = generateRandomValue(0, 180);
         const sinValue = Math.sin(radian(angle));
 
         const randomValue = generateRandomValue(0, sinValue);

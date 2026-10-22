@@ -4,20 +4,28 @@ function generateRandomValue(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-function generateRandomPositions(center, width, height, angle) {
+function scaleVector(vector, scaleFactor) {
+    return r.Vector2Scale(vector, scaleFactor);
+}
+
+function addVector(v1, v2) {
+    return r.Vector2Add(v1, v2);
+}
+
+function generateRandomPositions(parallelogramConfig) {
     const randomPositions = [];
+    const { vector1, vector2 } = parallelogramConfig;
 
-    for (let i = 0; i < 1000; i++) {
-        const rW = generateRandomValue(0, width);
-        const rH = generateRandomValue(0, height);
+    for (let i = 0; i < 500; i++) {
+        const randomX = Math.random();
+        const randomY = Math.random();
 
-        const y = center.y + rH;
+        const tH = scaleVector(vector1, randomX);
+        const tV = scaleVector(vector2, randomY);
 
-        const p = y - center.y;
-        const translateX = p / Math.tan(angle);
-        const x = center.x + rW + translateX;
+        const randomPosition = addVector(tH, tV);
 
-        randomPositions.push({ x, y });
+        randomPositions.push(randomPosition);
     }
 
     return randomPositions;
@@ -72,23 +80,14 @@ function setup() {
     r.SetTargetFPS(fps);
 
     const parallelogramConfig = {
-        center: { x: 300, y: 300 },
-        vector1: { radius: 900, angle: radian(0) },
-        vector2: { radius: 300, angle: radian(120) },
+        vector1: { x: 500, y: 0 },
+        vector2: { x: 100, y: 100 },
     };
 
-    const parallelogram = calcParallelogramCoordinates(parallelogramConfig);
-
-    const randomPositions = generateRandomPositions(
-        parallelogramConfig.center,
-        parallelogram.b.x - parallelogram.a.x,
-        parallelogram.c.y - parallelogram.a.y,
-        radian(120),
-    );
+    const randomPositions = generateRandomPositions(parallelogramConfig);
 
     return {
         screen: { width, height },
-        parallelogram,
         randomPositions,
     };
 }
@@ -101,9 +100,9 @@ function drawParallelogram(parallelogram) {
 }
 
 function draw(world) {
-    const parallelogram = world.parallelogram;
+    // const parallelogram = world.parallelogram;
 
-    drawParallelogram(parallelogram);
+    // drawParallelogram(parallelogram);
 
     for (const value of world.randomPositions) {
         r.DrawCircleV(value, 10, r.WHITE);
