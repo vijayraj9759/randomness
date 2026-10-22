@@ -48,7 +48,7 @@ function setup() {
     r.SetTargetFPS(fps);
 
     const parallelogramConfig = {
-        st: { x: 0, y: 0 },
+        st: { x: 120, y: 120 },
         vector1: { x: 500, y: 0 },
         vector2: { x: 100, y: 100 },
     };
@@ -72,7 +72,6 @@ function drawParallelogram(parallelogram) {
 
 function draw(world) {
     const parallelogram = world.parallelogram;
-
     const color = {
         r: 255,
         g: 255,
