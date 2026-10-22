@@ -1,9 +1,5 @@
 const r = require("raylib");
 
-function generateRandomValue(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
 function scaleVector(vector, scaleFactor) {
     return r.Vector2Scale(vector, scaleFactor);
 }
@@ -89,6 +85,7 @@ function setup() {
     return {
         screen: { width, height },
         randomPositions,
+        parallelogramConfig,
     };
 }
 
@@ -103,6 +100,16 @@ function draw(world) {
     // const parallelogram = world.parallelogram;
 
     // drawParallelogram(parallelogram);
+    const cf = world.parallelogramConfig;
+    const center = { x: 0, y: 0 };
+
+    const a = center;
+    const b = c.vector1;
+    const c = c.vector2;
+    const d = addVector(b, c);
+
+    const parallelogram = { a, b, c, d };
+    drawParallelogram(parallelogram);
 
     for (const value of world.randomPositions) {
         r.DrawCircleV(value, 10, r.WHITE);
